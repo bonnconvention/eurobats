@@ -6,6 +6,7 @@ docroot/sites/*/settings*.php
 drush/aliases/aliases.drushrc.php
 conf/config.json
 conf/apache.conf
+tmp/
 
 # User Generated Content #
 ##########################
