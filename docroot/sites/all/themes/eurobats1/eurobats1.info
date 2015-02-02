@@ -1,0 +1,30 @@
+name = Eurobats1
+description = EUROBATS only!
+core = 7.x
+
+;   REGIONS
+; -------------------------------------------
+regions[content] = Content
+;regions[sidebar_first] = Sidebar First
+regions[search] = Search
+regions[footer] = Footer
+
+regions[firstpagenews] = First page news
+regions[firstpageevents] = First page events
+regions[firstpageinfo] = First page editable area
+regions[firstpagecentralcol] = First page central column
+regions[firstpagerightcol] = First page right column
+
+; STYLESHEETS
+;---------------------------------
+stylesheets[all][] = css/style.css
+stylesheets[all][] = css/gallery0.css
+; conditional-stylesheets[if IE 7][all][] = css/style_ie78.css
+; conditional-stylesheets[if IE 8][all][] = css/style_ie78.css
+
+; SCRIPTS
+;---------------------------------
+scripts[] = inc/js/libcommon.js
+scripts[] = inc/js/libmenu.js
+scripts[] = inc/js/eurobatsgallery.js
+scripts[] = inc/js/map.js

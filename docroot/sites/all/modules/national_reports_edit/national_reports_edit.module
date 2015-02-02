@@ -1,0 +1,11 @@
+<?php
+/**
+* @file
+* A block module that displays recent blog and forum posts.
+*/
+/**
+*
+*/ 
+function national_reports_edit_help($path, $arg) {
+
+}

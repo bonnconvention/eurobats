@@ -1,0 +1,11 @@
+name = Hansel UI
+description = UI module for hansel breadcrumbs
+package = Hansel
+dependencies[] = hansel
+core = 7.x
+; Information added by Drupal.org packaging script on 2014-10-30
+version = "7.x-1.4"
+core = "7.x"
+project = "hansel"
+datestamp = "1414680353"
+

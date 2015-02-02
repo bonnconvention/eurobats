@@ -1,0 +1,7 @@
+name = Eurobats enum
+description = Enum from table.
+core = 7.x
+package = EUROBATS Fields
+
+files[] = ebenum.module
+files[] = ebenum.install

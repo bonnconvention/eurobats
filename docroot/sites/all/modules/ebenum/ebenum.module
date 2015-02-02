@@ -1,0 +1,194 @@
+<?php 
+
+function ebenum_field_info() {
+ return array(
+    "ebenum" => array(
+      "label" => t( "enum" ),
+      "description" => t( "Return enum from table's data" ),
+      "default_widget" => 'ebenum_widget',
+      "default_formatter" => "ebenum_formatter",
+
+      "settings" => Array( "ebenum_query" => "SELECT \n    <title_fld> AS title, \n    <value_fld> AS value\nFROM ...",
+                            "ebenum_valfromquery" => 0,
+                            "ebenum_keyisstring" => 0,
+                            "ebenum_queryv" => "SELECT \n    <value_fld> AS value\nFROM ...\nWHERE <key_fld> = {key}" )
+    )
+  );
+}
+
+function ebenum_field_widget_info() { 
+  return array(
+    "ebenum" => array(
+      "label" => t( "Enum select" ),
+      "field types" => array( "ebenum" ),
+    )
+  );
+}
+
+function ebenum_field_formatter_info() { 
+  return array(
+      "ebenum_formatter" => array(
+          "label" => t( "My Type field formatter" ),
+          "field types" => array( "ebenum" ),
+      ),
+  );
+}
+
+
+function ebenum_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+ 
+  switch ($instance[ "widget" ][ "type" ]) {
+      case "ebenum":
+        /*if ( isset($items[$delta]) ) {
+            ob_start();
+            print_r( $items[$delta] );
+            drupal_set_message( ob_get_clean() );
+        }*/
+
+        $info = _field_info_collate_fields();//content_fields( null, null );
+        
+        //drupal_set_message( $field[ "settings" ][ "ebenum_query" ] );
+        //ob_start();
+        //print( count( $info ) );
+        //print_r( $form );
+        //@ $node = $form[ "#node" ];
+        //if ( isset( $node ) )
+        //    echo "node ISSET";
+        //else
+        //    echo "node NOT ISSET!!";
+        //$node = $form[ "#node" ];
+        //echo $node->nid;
+        //print_r( $form[ "nid" ] );
+        //print_r( array_keys($info[ "fields" ]) );
+        //print_r( $info[ "fields" ][ 24 ] );
+        //drupal_set_message( ob_get_clean() );
+        //
+        @ $node = $form[ "#node" ];
+        if ( isset( $node ) )
+            if ( isset( $node->nid ) )
+                $nid = 0 + $node->nid;
+            else
+                $nid = 0;
+        else
+            $nid = 0;
+        $cur_value = isset($items[$delta][ "ebenum" ]) ? $items[$delta][ "ebenum" ] : "-1";
+        $sql = $sql = str_replace( "{cur_value}", $cur_value, str_replace( "{nid}", $nid, str_replace( "\"", "'", $field[ "settings" ][ "ebenum_query" ] ) ) );
+        @ $res = db_query( $sql );
+        $options = Array();
+        $options[ "-1" ] = "- None -";
+        foreach ( $res as $row ) {
+            $cname  = $row->title;
+            $cvalue = ( isset($row->value)?$row->value:$cname );
+            $options[ $cvalue ] = $cname;
+        }
+        $element[ "ebenum" ] = array(
+            "#type" => "select",
+            "#options" => $options,
+            "#title" => $element[ "#title" ],
+            "#description" => $element[ "#description" ],
+            "#default_value" =>  $cur_value,
+            "#required" => $element[ "#required" ],
+            "#weight" => isset($element[ "#weight" ]) ? $element[ "#weight" ] : 0,
+            "#delta" => $delta
+        );
+ 
+      break;
+  }
+  return $element;
+}
+
+function ebenum_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) { 
+    //drupal_set_message( "<h1>asdasdasd</h1>" );
+    //drupal_set_message( $field[ "settings" ][ "ebenum_valfromquery" ] );
+    //ob_start();
+    //print_r( $field[ "settings" ] );
+    //drupal_set_message( ob_get_clean() );
+
+    $element = array();
+    switch ( $display['type'] ) {
+        case "ebenum_formatter":
+            foreach ( $items as $delta => $item ) {
+                if ( isset( $item[ "ebenum" ] ) ) {
+                    if ( $field[ "settings" ][ "ebenum_valfromquery" ] == 0 )
+                        $formattedText = $item[ "ebenum" ];
+                    else {
+                        //$qu = ( ($field[ "settings" ][ "ebenum_keyisstring" ] == 1 )?"'":"");
+                        $key = $item[ "ebenum" ];
+                        if ( $field[ "settings" ][ "ebenum_keyisstring" ] == 1 )
+                            $key = "'" . $key . "'";
+                        else
+                            $key += 0;
+                        //$key = $qu . $item[ "ebenum" ] . $qu;
+                        $sql = str_replace( "{key}", $key, str_replace( "\"", "'", $field[ "settings" ][ "ebenum_queryv" ] ) );
+                        @ $res = db_query( $sql );
+
+                        $formattedText = "";
+                        foreach ( $res as $row ) {
+                            $formattedText = $row->value;
+                            break;
+                        }
+                    }
+                    $element[ $delta ][ "#markup" ] = $formattedText;
+                }
+            }
+            break;
+    }
+    return $element;
+}
+
+function ebenum_field_is_empty($item, $field) {
+    $res = TRUE;
+    if ( !empty( $item[ "ebenum" ] ) )
+        if ( $item[ "ebenum" ] != "-1" )
+            $res = FALSE;
+
+   return $res;
+}
+
+
+function ebenum_field_settings_form($field, $instance, $has_data) {
+
+    if ($field[ "type" ] == "ebenum" ) {
+        $settings = $field[ "settings" ];
+
+        $form[ "ebenum_query" ] = array(
+            "#type" => "textarea",
+            "#title" => t( "Query" ),
+
+            "#default_value" => $settings[ "ebenum_query" ],
+            "#required" => FALSE,
+            "#description" => t( "Alias : AS title ( required ). AS value ( optional )" )
+            //"#attributes" => Array( 'onclick' => 'my_type_func1( "' . drupal_get_path('module', 'my_type') . '" );' )
+        );
+
+        $form[ "ebenum_valfromquery" ] = array(
+            "#type" => "checkbox",
+            "#title" => t( "Get value as a result of query" ),
+
+            "#default_value" => $settings[ "ebenum_valfromquery" ],
+            "#required" => FALSE,
+            "#description" => t( "" )
+        );
+
+        $form[ "ebenum_keyisstring" ] = array(
+            "#type" => "checkbox",
+            "#title" => t( "Key is string" ),
+
+            "#default_value" => $settings[ "ebenum_keyisstring" ],
+            "#required" => FALSE,
+            "#description" => t( "" )
+        );
+
+        $form[ "ebenum_queryv" ] = array(
+            "#type" => "textarea",
+            "#title" => t( "Query for geting value" ),
+
+            "#default_value" => $settings[ "ebenum_queryv" ],
+            "#required" => FALSE,
+            "#description" => t( "" )
+        );
+
+
+        return $form;
+    }
+}

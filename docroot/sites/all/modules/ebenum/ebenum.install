@@ -1,0 +1,26 @@
+<?php
+/**
+ * @file
+ * Defines schema for ebenum fields
+ */
+
+/**
+ * Implements hook_field_schema().
+ */
+function ebenum_field_schema( $field ) {
+    //drupal_set_message( "my_type_field_schema " . $field[ "type" ] );
+    switch ( $field[ "type" ] ) {
+        case "ebenum" :
+            $columns = array(
+                "ebenum" => array(
+                        "type"      => "varchar",
+                        "length"    => 255,
+                        "not null"  => FALSE,
+                        )
+                );
+        break;
+    }
+  return array(
+    'columns' => $columns
+  );
+}
