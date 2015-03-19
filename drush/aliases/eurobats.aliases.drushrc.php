@@ -1,9 +1,9 @@
 <?php
 
-$aliases['eurobats.staging'] = array(
-  'uri' => 'eurobats.edw.ro',
+$aliases['staging'] = array(
+  'uri' => 'http://eurobats.edw.ro',
   'db-allows-remote' => TRUE,
-  'remote-host' => 'eurobats.edw.ro',
+  'remote-host' => 'php-devel1.edw.lan',
   'remote-user' => 'php',
   'root' => '/var/www/html/cms/eurobats.edw.ro/docroot',
   'path-aliases' => array(
@@ -16,12 +16,12 @@ $aliases['eurobats.staging'] = array(
   ),
 );
 
-$aliases['eurobats.production'] = array(
-  'uri' => 'eurobats.org',
+$aliases['prod'] = array(
+  'uri' => 'http://eurobats.org',
   'db-allows-remote' => TRUE,
-  'remote-host' => 'eurobats.org',
+  'remote-host' => 'cms.int',
   'remote-user' => 'php',
-  'root' => '/var/local/eurobats/www',
+  'root' => '/var/local/eurobats/docroot',
   'path-aliases' => array(
     '%files' => 'sites/default/files',
   ),
@@ -33,10 +33,6 @@ $aliases['eurobats.production'] = array(
     ),
   ),
 );
-
-// This alias is used in install and update scripts.
-// Rewrite it in your aliases.local.php as you need.
-$aliases['eurobats.staging.sync'] = $aliases['eurobats.production'];
 
 // Add your local aliases.
 if (file_exists(dirname(__FILE__) . '/aliases.local.php')) {
