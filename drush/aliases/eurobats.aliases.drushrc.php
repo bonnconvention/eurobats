@@ -9,11 +9,6 @@ $aliases['staging'] = array(
   'path-aliases' => array(
     '%files' => 'sites/default/files',
   ),
-  'command-specific' => array(
-    'sql-sync' => array(
-      'simulate' => '1',
-    ),
-  ),
 );
 
 $aliases['prod'] = array(
@@ -28,8 +23,6 @@ $aliases['prod'] = array(
   'command-specific' => array(
     'sql-sync' => array(
       'simulate' => '1',
-      'source-dump' => '/tmp/eurobats-source-dump-php.sql',
-      'target-dump' => '/tmp/eurobats-target-dump-php.sql.gz',
     ),
   ),
 );
