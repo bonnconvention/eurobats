@@ -5,7 +5,7 @@
  * Definition of the 'rounded_corners' panel style.
  */
 
-// Plugin definition
+// Plugin definition.
 $plugin = array(
   'title' => t('Rounded corners'),
   'description' => t('Presents the panes or panels with a rounded corner box around them'),
@@ -125,7 +125,7 @@ function panels_rounded_corners_css($display) {
     $filename = ctools_css_store($css_id, _panels_rounded_corners_css($idstr), FALSE);
   }
 
-  drupal_add_css($filename, 'module', 'all', FALSE);
+  drupal_add_css($filename, array('preprocess' => TRUE));
 }
 
 /**
