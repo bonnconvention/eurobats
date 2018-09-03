@@ -138,7 +138,7 @@ if ( $isScol ) {
   </div>
 <?php }
     else
-        include( "inc/php/libcommon.php" );
+        include_once( "inc/php/libcommon.php" );
         ?>
 
   <div class="content"<?php print $content_attributes . $scl; ?>>
