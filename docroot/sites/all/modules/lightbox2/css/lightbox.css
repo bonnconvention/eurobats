@@ -127,12 +127,11 @@
 
 #imageData {
   padding: 0 10px;
- }
+}
 
 #imageData #imageDetails {
-  width: 800px;
+  width: 70%;
   float: left;
-  margin-top: 5px;
   text-align: left;
 }
 
@@ -146,21 +145,17 @@
   padding-bottom: 1.0em;
 }
 
-#numberDisplay {
-  margin-top: 10px;
-}
-
 #imageData #lightbox2-node-link-text {
   display: block;
   padding-bottom: 1.0em;
 }
 
 #imageData #bottomNav {
-  height: 36px;
+  height: 66px;
 }
 .lightbox2-alt-layout #imageData #bottomNav,
 .lightbox2-alt-layout-data #bottomNav {
-  margin-bottom: 15px;
+  margin-bottom: 60px;
 }
 
 #lightbox2-overlay {
@@ -265,7 +260,7 @@
 
 .lightbox2-alt-layout-data #bottomNavClose,
 .lightbox2-alt-layout #bottomNavClose {
-  margin-top: 25px;
+  margin-top: 93px;
 }
 .lightbox2-alt-layout-data #bottomNavZoom,
 .lightbox2-alt-layout-data #bottomNavZoomOut,
