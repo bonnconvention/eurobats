@@ -1,0 +1,5 @@
+AuthType Basic
+AuthName "Protected Area" 
+AuthUserFile /etc/httpd/basic-auth.passwords
+Require valid-user
+
