@@ -1,0 +1,149 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function edw_healthcheck_menu() {
+  return array(
+    'edw_healthcheck/%' => array(
+      'title' => 'EDW HealthCheck',
+      'page callback' => 'edw_healthcheck_content',
+      'page arguments' => array(1),
+      'type' => MENU_CALLBACK,
+    ),
+    'edw_healthcheck' => array(
+      'title' => 'EDW HealthCheck',
+      'page callback' => 'edw_healthcheck_content',
+      'page arguments' => array('all'),
+      'type' => MENU_CALLBACK,
+    ),
+  );
+}
+
+/**
+ * Intermediate function to retrieve and print the module's processed data.
+ *
+ * @param string $type
+ */
+function edw_healthcheck_content($type = "all") {
+  $data = process_data($type);
+  render_data($data);
+  drupal_exit();
+}
+
+/**
+ * Main data processing function.
+ *
+ * It redirects towards different data processing functions, depending on the type
+ * of information that needs to be retrieved.
+ *
+ * @param $type
+ * @return array
+ */
+function process_data($type) {
+  $data = array();
+  switch ($type) {
+    case "all":
+      $data = array_merge(get_core_data(), get_modules_data(), get_themes_data(), get_cron_data());
+      break;
+
+    case "core":
+      $data = get_core_data();
+      break;
+
+    case "modules":
+      $data = get_modules_data();
+      break;
+
+    case "themes":
+      $data = get_themes_data();
+      break;
+
+    case "cron":
+      $data = get_cron_data();
+      break;
+  }
+return $data;
+}
+
+/**
+ * Retrieves information on drupal's core.
+ */
+function get_core_data() {
+  $plugin_data = array();
+  if ($available = update_get_available(TRUE)) {
+    module_load_include('inc', 'update', 'update.compare');
+    $data = update_calculate_project_data($available);
+    foreach ($data as $module_name => $info) {
+      if ($module_name == "drupal") {
+        $plugin_data[$module_name] = $info;
+        break;
+      }
+    }
+  }
+  return $plugin_data;
+}
+
+/**
+ * Retrieves information on drupal's modules.
+ */
+function get_modules_data() {
+  $plugin_data = array();
+  if ($available = update_get_available(FALSE)) {
+    $data = system_rebuild_module_data();
+
+    foreach ($data as $module_name => $info) {
+      if ($module_name == "drupal" || $info->info["package"] == "Core" || $info->info["package"] == "Testing") {
+        // Do Nothing.
+      }
+      else {
+        $info->project_type = 'module';
+        $plugin_data[$module_name] = $info;
+      }
+    }
+  }
+  return $plugin_data;
+}
+
+/**
+ * Retrieves information on drupal's modules.
+ */
+function get_themes_data() {
+  $plugin_data = system_list('theme');
+  foreach ($plugin_data as $theme_name => $info) {
+    $info->project_type = 'theme';
+  }
+  return $plugin_data;
+}
+
+/**
+ * Retrieves information on drupal's last run cron.
+ */
+function get_cron_data() {
+  $last_cron = variable_get('cron_last');
+  $last_run = (gmdate("H", $last_cron) + 3) . ":" . gmdate("i:s", $last_cron);
+  $date = new DateTime();
+  $request_time = $date->getTimestamp();
+  $plugin_data = ['last_cron_plugin' => ['last_cron_run' => $last_run, 'timestamp' => $last_cron, 'active_and_running' => check_cron_status($last_cron, $request_time), 'project_type' => 'last_cron']];
+  return $plugin_data;
+}
+
+/**
+ * Helper function that checks the execution of the cron in the last 6 hours.
+ *
+ * @param $last_cron
+ * @param $request_time
+ * @return bool
+ */
+function check_cron_status($last_cron, $request_time) {
+  return $last_cron + 21600 > $request_time;
+}
+
+/**
+ * Rendering function for the data processed by the module.
+ *
+ * @param $data
+ */
+function render_data($data) {
+  drupal_json_output($data);
+}

@@ -1,0 +1,13 @@
+name = EDW Health check monitoring
+description = Check the status and versioning of a Drupal application and its modules.
+version = VERSION
+package = Custom
+core = 7.x
+dependencies[] = drupal:update
+dependencies[] = basic_auth
+
+; Information added by Drupal.org packaging script on 2019-01-23
+version = "7.x-1.2"
+core = "7.x"
+project = "edw_healthcheck"
+datestamp = "1548243792"
