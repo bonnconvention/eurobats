@@ -10,14 +10,42 @@ function edw_healthcheck_menu() {
       'page callback' => 'edw_healthcheck_content',
       'page arguments' => array(1),
       'type' => MENU_CALLBACK,
+      'access callback' => 'edw_healthcheck_basic_auth',
     ),
     'edw_healthcheck' => array(
       'title' => 'EDW HealthCheck',
       'page callback' => 'edw_healthcheck_content',
       'page arguments' => array('all'),
       'type' => MENU_CALLBACK,
+      'access callback' => 'edw_healthcheck_basic_auth',
     ),
   );
+}
+
+function edw_healthcheck_basic_auth() {
+  $username = variable_get('edw_healthcheck_user');
+  $password = variable_get('edw_healthcheck_pass');
+
+  // Credentials for authentication were received.
+  if (isset($_SERVER['PHP_AUTH_PW'], $_SERVER['PHP_AUTH_USER'])) {
+    $event = 'edw_healthcheck_basic_auth_failed_login_ip';
+    $limit = 5;
+    $window = 3600;
+
+    if (flood_is_allowed($event, $limit, $window)) {
+      if ($password === $_SERVER['PHP_AUTH_PW'] && $username === $_SERVER['PHP_AUTH_USER']) {
+        flood_clear_event($event);
+        return TRUE;
+      }
+
+      flood_register_event($event, $window);
+    }
+  }
+
+  header('WWW-Authenticate: Basic realm="Restricted Area"');
+  header('HTTP/1.1 401 Unauthorized');
+
+  exit('Access denied.');
 }
 
 /**
@@ -59,11 +87,12 @@ function process_data($type) {
       $data = get_themes_data();
       break;
 
-    case "cron":
+    case "last_cron":
       $data = get_cron_data();
       break;
   }
-return $data;
+
+  return $data;
 }
 
 /**
