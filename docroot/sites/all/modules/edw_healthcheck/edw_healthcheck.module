@@ -69,10 +69,15 @@ function edw_healthcheck_content($type = "all") {
  * @return array
  */
 function process_data($type) {
+  if (in_array($type, ['all', 'core', 'modules'])) {
+    module_load_include('inc', 'update', 'update.fetch');
+    _update_refresh();
+  }
+
   $data = array();
   switch ($type) {
     case "all":
-      $data = array_merge(get_core_data(), get_modules_data(), get_themes_data(), get_cron_data());
+      $data = array_merge(get_core_data(), get_modules_data(), get_cron_data(), get_enabled_modules_data());
       break;
 
     case "core":
@@ -89,6 +94,10 @@ function process_data($type) {
 
     case "last_cron":
       $data = get_cron_data();
+      break;
+
+    case "enabled_modules":
+      $data = get_enabled_modules_data();
       break;
   }
 
@@ -118,17 +127,19 @@ function get_core_data() {
  */
 function get_modules_data() {
   $plugin_data = array();
-  if ($available = update_get_available(FALSE)) {
+  if ($available = update_get_available()) {
     $data = system_rebuild_module_data();
 
     foreach ($data as $module_name => $info) {
       if ($module_name == "drupal" || $info->info["package"] == "Core" || $info->info["package"] == "Testing") {
-        // Do Nothing.
+        continue;
       }
-      else {
-        $info->project_type = 'module';
-        $plugin_data[$module_name] = $info;
+
+      $info->project_type = 'module';
+      if (empty($info->releases) && !empty($available[$module_name]['releases'])) {
+        $info->releases = $available[$module_name]['releases'];
       }
+      $plugin_data[$module_name] = $info;
     }
   }
   return $plugin_data;
@@ -154,6 +165,20 @@ function get_cron_data() {
   $date = new DateTime();
   $request_time = $date->getTimestamp();
   $plugin_data = ['last_cron_plugin' => ['last_cron_run' => $last_run, 'timestamp' => $last_cron, 'active_and_running' => check_cron_status($last_cron, $request_time), 'project_type' => 'last_cron']];
+  return $plugin_data;
+}
+
+/**
+ * Retrieves the list of drupal's enabled modules.
+ */
+function get_enabled_modules_data() {
+  $plugin_data = array();
+  $plugin_data['enabled_modules']['project_type'] = 'enabled_modules';
+  if ($raw_data = module_list()) {
+    foreach ($raw_data as $module_name => $info) {
+      $plugin_data['enabled_modules']['modules'][] = $module_name;
+    }
+  }
   return $plugin_data;
 }
 

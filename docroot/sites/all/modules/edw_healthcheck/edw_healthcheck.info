@@ -5,8 +5,8 @@ package = Custom
 core = 7.x
 dependencies[] = drupal:update
 
-; Information added by Drupal.org packaging script on 2019-02-14
-version = "7.x-1.3"
+; Information added by Drupal.org packaging script on 2019-02-22
+version = "7.x-1.6"
 core = "7.x"
 project = "edw_healthcheck"
-datestamp = "1550158986"
+datestamp = "1550845688"
