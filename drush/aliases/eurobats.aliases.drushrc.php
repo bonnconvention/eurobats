@@ -1,32 +1,5 @@
 <?php
 
-$aliases['staging'] = array(
-  'uri' => 'http://eurobats.edw.ro',
-  'db-allows-remote' => TRUE,
-  'remote-host' => 'php-devel1.edw.lan',
-  'remote-user' => 'php',
-  'root' => '/var/www/html/cms/eurobats.edw.ro/docroot',
-  'path-aliases' => array(
-    '%files' => 'sites/default/files',
-  ),
-);
-
-$aliases['prod'] = array(
-  'uri' => 'http://eurobats.org',
-  'db-allows-remote' => TRUE,
-  'remote-host' => 'unep-aewa.org',
-  'remote-user' => 'php',
-  'root' => '/var/local/eurobats/docroot',
-  'path-aliases' => array(
-    '%files' => 'sites/default/files',
-  ),
-  'command-specific' => array(
-    'sql-sync' => array(
-      'simulate' => '1',
-    ),
-  ),
-);
-
 // Add your local aliases.
 if (file_exists(dirname(__FILE__) . '/aliases.local.php')) {
   include dirname(__FILE__) . '/aliases.local.php';
