@@ -26,7 +26,8 @@ web.config
 docroot/files
 docroot/sites/*/files
 docroot/sites/*/private
-private_files
+/private_files
+/private-files
 
 # Vagrant Files #
 #################
