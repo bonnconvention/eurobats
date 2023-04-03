@@ -7,7 +7,6 @@
  * rather than just a stdClass or array. This class is for testing that
  * functionality. (See testQueryFetchClass() below)
  */
-#[AllowDynamicProperties]
 class FakeRecord { }
 
 /**
@@ -4280,7 +4279,6 @@ class ConnectionUnitTest extends DrupalUnitTestCase {
 
   protected $key;
   protected $target;
-  protected $originalTarget;
 
   protected $monitor;
   protected $originalCount;

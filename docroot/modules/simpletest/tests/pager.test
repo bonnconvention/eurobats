@@ -10,7 +10,6 @@
  */
 class PagerFunctionalWebTestCase extends DrupalWebTestCase {
   protected $profile = 'testing';
-  protected $admin_user;
 
   public static function getInfo() {
     return array(
